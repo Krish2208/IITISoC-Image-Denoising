@@ -1,10 +1,16 @@
-from PIL import Image
+from distutils.log import debug
 from torchvision import transforms
 import torch
 import torch.nn as nn
 from torchmetrics import StructuralSimilarityIndexMeasure
 from skimage.metrics import peak_signal_noise_ratio
 import numpy as np
+import io
+from PIL import Image
+from flask import Flask, jsonify, request
+import base64
+
+app = Flask(__name__)
 
 class ADNet(nn.Module):
     def __init__(self, channels, num_of_layers=15):
@@ -79,25 +85,44 @@ class ADNet(nn.Module):
         out2 = x - out
         return out2
 
-trans = transforms.ToPILImage()
 net = ADNet(channels=3, num_of_layers=17)
 device_ids = [0]
 model = nn.DataParallel(net, device_ids=device_ids)
-model.load_state_dict(torch.load("./ADNet/original model/model_100.pth", map_location=torch.device('cpu')))
+model.load_state_dict(torch.load("./Model/original17/model_100.pth", map_location=torch.device('cpu')))
 model.eval()
-loader = transforms.Compose([
-    transforms.ToTensor()
-])
-image = Image.open("./cam2.jpg")
-image = loader(image).float()
-image = image.unsqueeze(0)
-out = model(image)
-ssim_module = StructuralSimilarityIndexMeasure(data_range=1)
-SSIM = ssim_module(out, image)
-Img = image.data.numpy().astype(np.float32)
-Iclean = out.data.numpy().astype(np.float32)
-PSNR = peak_signal_noise_ratio(Iclean, Img, data_range=1.)
-out = torch.clamp(out, 0., 1.)
-out = out.squeeze(0)
-print(SSIM, PSNR)
-trans(out).save('./predict2_5.jpg')
+
+def metrics(image, out):
+    ssim_module = StructuralSimilarityIndexMeasure(data_range=1)
+    SSIM = ssim_module(out, image)
+    Img = image.data.numpy().astype(np.float32)
+    Iclean = out.data.numpy().astype(np.float32)
+    PSNR = peak_signal_noise_ratio(Iclean, Img, data_range=1.)
+    return PSNR, SSIM.item()
+
+def get_prediction(image):
+    image = Image.open(image)
+    trans = transforms.ToPILImage()
+    loader = transforms.Compose([
+        transforms.ToTensor()
+    ])
+
+    image = loader(image).float()
+    image = image.unsqueeze(0)
+    out = model(image)
+    psnr, ssim = metrics(image, out)
+    out = torch.clamp(out, 0., 1.)
+    out = out.squeeze(0)
+    return trans(out), psnr, ssim
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    if request.method == 'POST':
+        im = io.BytesIO(base64.b64decode(request.json['x']))
+        clean_image, psnr, ssim = get_prediction(image=im)
+        img_io = io.BytesIO()
+        clean_image.save(img_io, 'JPEG', quality=100)
+        x = base64.b64encode(img_io.getvalue())
+        return jsonify({'image': x.decode('utf-8'), 'psnr': psnr, 'ssim': ssim})
+
+if __name__ == '__main__':
+    app.run(debug=True)
