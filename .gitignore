@@ -131,3 +131,6 @@ dmypy.json
 # Other Folder
 /data
 /GAN
+/DnCNN
+/RDUNet
+/RIDNet
