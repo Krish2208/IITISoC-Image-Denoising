@@ -1,6 +1,9 @@
 import "./App.css";
+import React from "react";
 import Home from "./components/home";
 import Model from "./components/model";
+import Camera from "./components/camera"
+import New from "./components/new"
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
@@ -8,17 +11,17 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 library.add(fas);
 
 function App() {
-  return (<>
-    <Model/>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/model" element={<Model />} />
-      </Routes>
-    </BrowserRouter>
+  return (
+    <>
+      <Model/>
+      {/* /* <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/model" element={<Model />} />
+        </Routes>
+      </BrowserRouter> */ }
     </>
-    );
-    
+  );
 }
 
 export default App;
