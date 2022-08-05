@@ -1,21 +1,14 @@
 import React from "react";
+import axios from "axios";
 import "./model.css";
 import { useState } from "react";
 import placeholder from "../placeholder.png";
 import Modal from "react-bootstrap/Modal";
 import Camera, { FACING_MODES, IMAGE_TYPES } from "react-html5-camera-photo";
 import "react-html5-camera-photo/build/css/index.css";
-import "./camera.css";
+const imageToBase64 = require("image-to-base64");
 
 export default function Model() {
-  const [img, setImg] = useState(placeholder);
-  // setImg();
-  const onImageChange = (e) => {
-    const [file] = e.target.files;
-    setImg(URL.createObjectURL(file));
-    console.log(setImg);
-  };
-
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
@@ -24,6 +17,8 @@ export default function Model() {
   function handleTakePhoto(dataUri) {
     // Do stuff with the photo...
     console.log("takePhoto");
+    handleClose();
+    setImg(dataUri);
   }
 
   function handleTakePhotoAnimationDone(dataUri) {
@@ -42,6 +37,17 @@ export default function Model() {
   function handleCameraStop() {
     console.log("handleCameraStop");
   }
+  const handleDenoise = (img) => {};
+
+  const [image, denoisedImage] = useState("");
+
+  const [img, setImg] = useState(placeholder);
+  // setImg();
+  const onImageChange = (e) => {
+    const [file] = e.target.files;
+    setImg(URL.createObjectURL(file));
+    console.log(setImg);
+  };
 
   return (
     <>
@@ -112,6 +118,18 @@ export default function Model() {
       <div className="split right">
         <div className="right_heading">
           <h1>ADNet Image Denoising Model</h1>
+          <div className="image-div">
+            <img className="image" src={img} alt="" />
+          </div>
+          <div className="noise">
+            <p className="psnr">PSNR: </p>
+            <p className="ssim">SSIM: </p>
+          </div>
+          <div className="download">
+            <a href={img} download="Denoised Image">
+              <button type="button">Download</button>
+            </a>
+          </div>
         </div>
       </div>
     </>

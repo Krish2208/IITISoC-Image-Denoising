@@ -1,4 +1,3 @@
-
 .split {
   height: 100%;
   width: 50%;
@@ -9,26 +8,20 @@
   padding-top: 20px;
 }
 
-/* Control the left side */
+
 .left {
   left: 0;
-  /* background-color: /black; */
   background-image: url("../black_bg_noisy.png");
-
-  /* background-repeat: no-repeat; */
-  /* background-size: cover; */
 }
 
-/* Control the right side */
+
 .right {
   right: 0;
   background-image: url("../white_bg.png");
-  /* background-color: #d9d9d9; */
   background-repeat: no-repeat;
   background-size: cover;
 }
 
-/* If you want the content centered horizontally and vertically */
 .centered {
   position: absolute;
   top: 50%;
@@ -37,7 +30,6 @@
   text-align: center;
 }
 
-/* Style the image inside the centered container, if needed */
 .centered img {
   width: 150px;
   border-radius: 50%;
@@ -84,4 +76,20 @@
   .denoisebtn{
     border: none;
     margin-top: 20px;
+  }
+
+  .clean_image{
+    padding-top: 50px ;
+    height: 600px;
+    width: 600px;
+  }
+
+  .noise{
+    text-align: left;
+    margin-left: 200px;
+    padding-top: 20px;
+  }
+
+  .download{
+      padding-bottom:20px;
   }

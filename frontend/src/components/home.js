@@ -19,7 +19,7 @@ export default function home() {
         }}
       >
         <img src={logo} className="logo" alt="Logo" />
-        <a href="/app" className="link">
+        <a href="/model" className="link">
           <div className="startlink">
             Get Started
             <FontAwesomeIcon
