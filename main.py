@@ -8,9 +8,12 @@ import numpy as np
 import io
 from PIL import Image
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 import base64
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 class ADNet(nn.Module):
     def __init__(self, channels, num_of_layers=15):

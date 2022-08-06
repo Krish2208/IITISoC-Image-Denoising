@@ -10,15 +10,39 @@ const imageToBase64 = require("image-to-base64");
 
 export default function Model() {
   const [show, setShow] = useState(false);
+  const [img, setImg] = useState(placeholder);
+  const [denoisedImage, setDenoisedImage] = useState("");
+  const [metrics, setMetrics] = useState({ psnr: " ", ssim: "" });
+  const [file_obj, setFileObj] = useState(false);
+  const [check, setCheck] = useState(false);
+  const [denoisedImageObj, setDenoisedImageObj] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  const getBase64 = (file) => {
+    return new Promise((resolve) => {
+      let baseURL = "";
+      // Make new FileReader
+      let reader = new FileReader();
+
+      // Convert the file to base64 text
+      reader.readAsDataURL(file);
+
+      // on reader load somthing...
+      reader.onload = () => {
+        baseURL = reader.result;
+        resolve(baseURL);
+      };
+    });
+  };
 
   function handleTakePhoto(dataUri) {
     // Do stuff with the photo...
     console.log("takePhoto");
     handleClose();
     setImg(dataUri);
+    setCheck(true);
   }
 
   function handleTakePhotoAnimationDone(dataUri) {
@@ -37,16 +61,44 @@ export default function Model() {
   function handleCameraStop() {
     console.log("handleCameraStop");
   }
-  const handleDenoise = (img) => {};
-
-  const [image, denoisedImage] = useState("");
-
-  const [img, setImg] = useState(placeholder);
+  const handleDenoise = () => {
+    console.log(img);
+    if (!check) {
+      getBase64(file_obj)
+        .then((result) => {
+          axios
+            .post("http://127.0.0.1:5000/predict", {
+              x: result.slice(23, result.length),
+            })
+            .then((res) => {
+              setDenoisedImage(res.data.image);
+              setMetrics({ psnr: res.data.psnr, ssim: res.data.ssim });
+            });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      axios
+        .post("http://127.0.0.1:5000/predict", {
+          x: img.slice(23, img.length),
+        })
+        .then((res) => {
+          setDenoisedImage(res.data.image);
+          setMetrics({ psnr: res.data.psnr, ssim: res.data.ssim });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  };
   // setImg();
   const onImageChange = (e) => {
     const [file] = e.target.files;
     setImg(URL.createObjectURL(file));
-    console.log(setImg);
+    setFileObj(file);
+    setCheck(false);
+    // console.log(img);
   };
 
   return (
@@ -86,7 +138,7 @@ export default function Model() {
                       }}
                       idealFacingMode={FACING_MODES.ENVIRONMENT}
                       idealResolution={{ width: 640, height: 480 }}
-                      imageType={IMAGE_TYPES.PNG}
+                      imageType={IMAGE_TYPES.JPG}
                       imageCompression={0.97}
                       isMaxResolution={true}
                       isImageMirror={true}
@@ -108,7 +160,14 @@ export default function Model() {
                 <img className="image" src={img} alt="" />
               </div>
               <div className="denoisebtn">
-                <button className="denoisebtn">Denoise</button>
+                <button
+                  className="denoisebtn"
+                  onClick={() => {
+                    handleDenoise();
+                  }}
+                >
+                  Denoise
+                </button>
               </div>
             </div>
           </div>
@@ -119,14 +178,18 @@ export default function Model() {
         <div className="right_heading">
           <h1>ADNet Image Denoising Model</h1>
           <div className="image-div">
-            <img className="image" src={img} alt="" />
+            <img
+              className="image"
+              src={`data:image/png;base64,${denoisedImage}`}
+              alt=""
+            />
           </div>
           <div className="noise">
-            <p className="psnr">PSNR: </p>
-            <p className="ssim">SSIM: </p>
+            <p className="psnr">PSNR: {metrics.psnr}</p>
+            <p className="ssim">SSIM: {metrics.ssim}</p>
           </div>
           <div className="download">
-            <a href={img} download="Denoised Image">
+            <a href={`data:image/png;base64,${denoisedImage}`} download="Denoised Image">
               <button type="button">Download</button>
             </a>
           </div>
