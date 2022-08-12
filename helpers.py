@@ -29,3 +29,11 @@ def resize():
         im = im.crop(((width//2)-128,(height//2)-128,(width//2)+128,(height//2)+128))
         im.save(f'./data/final_test/{i}')
 
+def calculate_avg_psnr():
+    with open("./Model/original25/psnr.txt", "r") as f:
+        x = f.readlines()
+        sum = 0
+        for i in x:
+            sum += float(i.split("(")[-1][0:6])
+        print(sum)
+calculate_avg_psnr()

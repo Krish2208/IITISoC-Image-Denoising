@@ -53,11 +53,12 @@
 }
 
 .image{
-  border: 5px #fff solid;
   max-width:600px;
   max-height:600px;
   width: auto;
   height: auto;
+  border-radius: 30px;
+  border: 1px solid #fff;
   }
 
   .image-div{
@@ -86,10 +87,27 @@
 
   .noise{
     text-align: left;
-    margin-left: 200px;
-    padding-top: 20px;
+    margin-left: 200px !important;
+    padding-top: 10px !important;
   }
 
   .download{
       padding-bottom:20px;
   }
+
+  .btn{
+    border-radius: 50%;
+    background-color: #fff !important;
+  }
+
+  .btn-dark{
+    color: #000 !important;
+  }
+
+  input::file-selector-button {
+    border-radius: 50%;
+    background-color: #fff !important;
+    padding: 0.35em 1em 0.35em 1em;
+    border: thin solid grey;
+    border-radius: 3px;
+}
