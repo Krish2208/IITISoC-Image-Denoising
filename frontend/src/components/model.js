@@ -19,10 +19,10 @@ export default function Model() {
   const [file_obj, setFileObj] = useState(false);
   const [check, setCheck] = useState(false);
   const [denoisedImageObj, setDenoisedImageObj] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   const handleClose = () => {
-    setShow(false)
-    setCamera(false)
+    setShow(false);
+    setCamera(false);
   };
   const handleShow = () => {
     setShow(true);
@@ -72,7 +72,7 @@ export default function Model() {
     console.log("handleCameraStop");
   }
   const handleDenoise = () => {
-    console.log(img);
+    setLoading(true);
     if (!check) {
       getBase64(file_obj)
         .then((result) => {
@@ -83,10 +83,12 @@ export default function Model() {
             .then((res) => {
               setDenoisedImage(res.data.image);
               setMetrics({ psnr: res.data.psnr, ssim: res.data.ssim });
+              setLoading(false);
             });
         })
         .catch((err) => {
           console.log(err);
+          setLoading(false);
         });
     } else {
       axios
@@ -96,9 +98,11 @@ export default function Model() {
         .then((res) => {
           setDenoisedImage(res.data.image);
           setMetrics({ psnr: res.data.psnr, ssim: res.data.ssim });
+          setLoading(false);
         })
         .catch((err) => {
           console.log(err);
+          setLoading(false);
         });
     }
   };
@@ -113,6 +117,15 @@ export default function Model() {
 
   return (
     <>
+      {loading ? (
+        <div className="loading">
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border loader text-light" role="status"></div>
+          </div>
+        </div>
+      ) : (
+        <></>
+      )}
       <div className="split left">
         <div className="left_heading">
           <h1>Upload/Image Capture</h1>
@@ -140,33 +153,35 @@ export default function Model() {
                 </Modal.Header>
                 <Modal.Body>
                   <div className="photoclick">
-                    {camera ? <Camera
-                      onTakePhoto={(dataUri) => {
-                        handleTakePhoto(dataUri);
-                      }}
-                      onTakePhotoAnimationDone={(dataUri) => {
-                        handleTakePhotoAnimationDone(dataUri);
-                      }}
-                      onCameraError={(error) => {
-                        handleCameraError(error);
-                      }}
-                      idealFacingMode={FACING_MODES.ENVIRONMENT}
-                      idealResolution={{ width: 640, height: 480 }}
-                      imageType={IMAGE_TYPES.JPG}
-                      imageCompression={0.97}
-                      isMaxResolution={true}
-                      isImageMirror={true}
-                      isSilentMode={true}
-                      isDisplayStartCameraError={true}
-                      isFullscreen={false}
-                      sizeFactor={1}
-                      onCameraStart={(stream) => {
-                        handleCameraStart(stream);
-                      }}
-                      onCameraStop={() => {
-                        handleCameraStop();
-                      }}
-                    />: null}
+                    {camera ? (
+                      <Camera
+                        onTakePhoto={(dataUri) => {
+                          handleTakePhoto(dataUri);
+                        }}
+                        onTakePhotoAnimationDone={(dataUri) => {
+                          handleTakePhotoAnimationDone(dataUri);
+                        }}
+                        onCameraError={(error) => {
+                          handleCameraError(error);
+                        }}
+                        idealFacingMode={FACING_MODES.ENVIRONMENT}
+                        idealResolution={{ width: 640, height: 480 }}
+                        imageType={IMAGE_TYPES.JPG}
+                        imageCompression={0.97}
+                        isMaxResolution={true}
+                        isImageMirror={true}
+                        isSilentMode={true}
+                        isDisplayStartCameraError={true}
+                        isFullscreen={false}
+                        sizeFactor={1}
+                        onCameraStart={(stream) => {
+                          handleCameraStart(stream);
+                        }}
+                        onCameraStop={() => {
+                          handleCameraStop();
+                        }}
+                      />
+                    ) : null}
                   </div>
                 </Modal.Body>
               </Modal>
@@ -201,27 +216,33 @@ export default function Model() {
             />
           </div>
           <br />
-          { metrics.psnr=="" ?<></> :<><div className="download">
-              <a
-                href={`data:image/png;base64,${denoisedImage}`}
-                download="Denoised Image"
-              >
-                <button
-                  type="button"
-                  className="btn-dark btn btn-outline-dark btn-lg"
+          {metrics.psnr == "" ? (
+            <></>
+          ) : (
+            <>
+              <div className="download">
+                <a
+                  href={`data:image/png;base64,${denoisedImage}`}
+                  download="Denoised Image"
                 >
-                  Download
-                </button>
-              </a>
-            </div>
-            <div className="noise row">
-              <div className="col">
-                <p className="psnr">PSNR: {metrics.psnr}</p>
+                  <button
+                    type="button"
+                    className="btn-dark btn btn-outline-dark btn-lg"
+                  >
+                    Download
+                  </button>
+                </a>
               </div>
-              <div className="col">
-                <p className="ssim">SSIM: {metrics.ssim}</p>
+              <div className="noise row">
+                <div className="col">
+                  <p className="psnr">PSNR: {metrics.psnr}</p>
+                </div>
+                <div className="col">
+                  <p className="ssim">SSIM: {metrics.ssim}</p>
+                </div>
               </div>
-            </div></>}
+            </>
+          )}
         </div>
       </div>
     </>

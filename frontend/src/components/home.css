@@ -24,9 +24,24 @@
   color: black;
   padding-left: 20px;
   text-align: left;
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
 }
 
 .navtext{
   padding-left: 10px;
   font-size: large;
+  text-align: right !important;
+}
+
+.inline_text{
+  text-align: right !important;
+}
+
+.navlink{
+  padding-left: 20px;
+}
+
+.summary{
+  text-align: justify;
 }

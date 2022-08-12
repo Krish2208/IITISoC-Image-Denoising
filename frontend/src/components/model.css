@@ -39,7 +39,7 @@
     font-size: large;
     text-align: center;
     color:white;
-    font-family: 'Gill Sans','Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     margin-top: 20px;
     align-content: center;
 }
@@ -48,8 +48,8 @@
     font-size: large;
     text-align: center;
     color:black;
-    font-family: 'Gill Sans','Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     margin-top: 20px;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif!important;
 }
 
 .image{
@@ -57,8 +57,6 @@
   max-height:600px;
   width: auto;
   height: auto;
-  border-radius: 30px;
-  border: 1px solid #fff;
   }
 
   .image-div{
@@ -110,4 +108,27 @@
     padding: 0.35em 1em 0.35em 1em;
     border: thin solid grey;
     border-radius: 3px;
+}
+
+.right_heading h1{
+  font-weight: 900 !important;
+  /* font-family: "Poppins"; */
+}
+
+.loading{
+  z-index: 99 !important;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0, 0.85) !important;
+}
+
+.loader{
+  z-index: 100 !important;
+  position: absolute;
+  top: 50%;
+  height: 3rem !important;
+  width: 3rem !important;
 }
