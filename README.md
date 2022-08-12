@@ -8,8 +8,7 @@ We implemented ADNet, RIDNet, and DnCNN by customizing it and trained them on Go
  - Rupal Shah
  - Khushi Sawla
 ## Dataset
-VIRAT Video Dataset(We took images out of this dataset at every 5 second interval and prepared an image dataset containing 64 training images, 16 validation images, 8 test images of 1080x1920 size.)
+Div2k
 ## Technology Used
--   PyTorch (Implemented ADNet and DnCNN)
--   Tensorflow (Implemented RIDNet)
+-   PyTorch (Implemented ADNet)
 -   Sci-Kit Image (To Add Random Gaussian Noise to the images)
